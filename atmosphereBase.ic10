@@ -1,0 +1,78 @@
+alias emergencySwitch d0
+alias vacuumSwitch d1
+alias emergencyShutoff r1
+alias vacuumOn r2
+alias pressure r3
+alias exfil r4
+alias temperature r5
+alias powerCheck r6
+alias occupy r7
+alias moles r8
+alias percent r9
+define volumePump -321403609
+define pipeHeater -419758574
+define liquidHeater -287495560
+define pipeAnalyzer 435685051
+define liquidAnalyzer -2113838091
+define gasMixer 2104106366
+define pressureRegulator 209854039
+define iceCrusher 443849486
+define airConditioner -2087593337
+define turboPump 1310794736
+define purgeValve -737232128
+
+main:
+yield
+jal baseAtmo
+jal ACMaintenance
+jal evaporator
+j main
+
+ACMaintenance:
+yield
+lbn temperature pipeAnalyzer HASH("AC Waste Analyzer") Temperature Sum
+sub temperature temperature 273
+slt temperature temperature -50
+sbn pipeHeater HASH("AC Waste Heater") On temperature
+j ra
+
+baseAtmo:
+yield
+lbn pressure pipeAnalyzer HASH("Base Atmo Analyzer") Pressure Sum
+lbn temperature pipeAnalyzer HASH("Base Atmo Analyzer") Temperature Sum
+sgt exfil pressure 90
+slt powerCheck pressure 102
+sbn turboPump HASH("Base Atmo Exfil Pump") On exfil
+sbn gasMixer HASH("Base Atmo Mixer") On powerCheck
+sbn pipeHeater HASH("Base Heater") On temperature
+j ra
+
+greenhouseAtmo:
+yield
+lbn pressure pipeAnalyzer HASH("Greenhouse Atmo Analyzer") Pressure Sum
+sgt exfil pressure 99
+slt powerCheck pressure 101
+sbn volumePump HASH("Greenhouse Atmo Exfil Pump") On exfil
+sbn gasMixer HASH("Greenhouse Atmo Mixer") On powerCheck
+lbn temperature pipeAnalyzer HASH("Greenhouse Atmo Analyzer") Temperature Sum
+sgt temperature temperature 31
+sbn airConditioner HASH("Greenhouse AC") On temperature
+slt temperature temperature 25
+sbn pipeHeater HASH("Greenhouse Heater") On temperature
+j ra
+
+evaporator:
+yield
+lbn temperature liquidAnalyzer HASH("Evaporator Analyzer") Temperature Sum
+lbn pressure liquidAnalyzer HASH("Evaporator Analyzer") Pressure Sum
+lbn moles liquidAnalyzer HASH("Evaporator Analyzer") TotalMoles Sum
+lbn percent liquidAnalyzer HASH("Evaporator Analyzer") RatioLiquidNitrousOxide Sum
+sub temperature temperature 273
+slt temperature temperature 20
+snez pressure pressure
+mul moles moles percent
+sgt moles moles 0.05
+and powerCheck temperature moles
+sbn liquidHeater HASH("Evaporator Heater") On powerCheck
+sbn purgeValve HASH("Evaporator Purge") On pressure
+j ra

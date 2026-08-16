@@ -1,0 +1,33 @@
+alias charger d0
+alias chargerpower r0
+alias chargeractivate r1
+alias chargeroccupancy r2
+alias chargerslotpower r3
+alias chargerslotpowercheck r4
+alias chargerneeded r5
+alias slotNum r6
+
+reset:
+move slotNum 0
+j batterycharger
+
+chargeron:
+yield
+s charger On 1
+sleep 1
+l chargerpower charger RequiredPower
+sgt chargeractivate chargerpower 10
+beqz chargeractivate batterycharger
+j chargeron
+
+batterycharger:
+yield
+s charger On 0
+ls chargeroccupancy charger slotNum Occupied #Check if slot is occupied
+ls chargerslotpower charger slotNum ChargeRatio #check slot charge
+slt chargerslotpowercheck chargerslotpower 1 #if charge slot < 100
+and chargerneeded chargeroccupancy chargerslotpowercheck #if chargeoccupancy and 
+beqal chargerneeded 1 chargeron                 #chargepercentcheck = 1, turn on charger
+beqal slotNum 4 reset
+add slotNum slotNum 1
+j batterycharger

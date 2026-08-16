@@ -1,0 +1,22 @@
+alias sensor d0
+define panels 939649277 #1x5 dual panels with data port facing and sensor facing sunrise
+alias placeHolder r0
+alias solarReset r1
+
+trackSun:
+yield
+l placeHolder sensor Vertical
+add placeHolder placeHolder 90
+bgt placeHolder 173 reset 
+sb panels Vertical placeHolder
+
+l placeHolder sensor Horizontal
+sub placeHolder placeHolder 90
+sb panels Horizontal placeHolder
+
+j trackSun
+
+reset:
+sb panels Vertical 0
+sb panels Horizontal 90
+j trackSun

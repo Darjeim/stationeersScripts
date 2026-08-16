@@ -1,0 +1,34 @@
+alias sensor d0
+alias waterFountain d1
+alias bottleFiller d2
+alias workbench d4
+alias shower d5
+alias occupancy r0
+alias fillLevel r1
+alias rightBottle r2
+alias leftBottle r3
+alias turnOn r4
+define lights 1514476632
+
+main:
+yield
+l occupancy sensor Activate
+sb lights On occupancy
+s workbench On occupancy
+s waterFountain On occupancy
+s shower On occupancy
+jal waterbottles
+j main
+
+waterbottles:
+ls occupancy bottleFiller 0 Occupied
+ls fillLevel bottleFiller 0 Quantity
+slt fillLevel fillLevel 1.5
+and leftBottle occupancy fillLevel
+ls occupancy bottleFiller 1 Occupied
+ls fillLevel bottleFiller 1 Quantity
+slt fillLevel fillLevel 1.5
+and rightBottle occupancy fillLevel
+or turnOn rightBottle leftBottle
+s bottleFiller On turnOn
+j ra

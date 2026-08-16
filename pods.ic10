@@ -1,0 +1,32 @@
+alias pod1 d0
+alias pod2 d1
+alias occupancySensor d2
+alias podOccupants r0
+alias roomOccupants r1
+alias sethOccupy r2
+alias foofOccupy r3
+define roomLights 1514476632
+
+main:
+yield
+jal lights
+jal pods
+j main
+
+lights:
+yield
+l roomOccupants occupancySensor Quantity
+ls sethOccupy pod1 0 Occupied
+ls foofOccupy pod2 0 Occupied
+add podOccupants foofOccupy sethOccupy
+sgt roomOccupants roomOccupants podOccupants
+sb roomLights On roomOccupants
+j ra
+
+pods:
+yield
+ls podOccupants pod1 0 Occupied
+s pod1 On podOccupants
+ls podOccupants pod2 0 Occupied
+s pod2 On podOccupants
+j ra

@@ -1,0 +1,20 @@
+alias recycler d0
+alias centrifuge d1
+alias occupied r1
+alias centrifugePower r2
+alias centrifugeState r3
+
+main:
+yield
+ls occupied recycler 0 Occupied
+beqal occupied 1 recycler
+j main
+
+recycler:
+yield
+s recycler On 1
+sleep 3
+ls occupied recycler 0 Occupied
+beqal occupied 1 recycler
+s recycler On 0
+j ra

@@ -1,0 +1,16 @@
+alias mixer d0
+alias analyzer d1
+alias atmosoutput d2
+alias exfilpower r2
+alias pressure r0
+alias exfil r1
+alias mixerpowercheck r3
+
+main:
+yield
+l pressure analyzer Pressure
+sgt exfil pressure 99
+slt mixerpowercheck pressure 101
+s atmosoutput On exfil
+s mixer On mixerpowercheck
+j main

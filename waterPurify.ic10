@@ -1,0 +1,33 @@
+alias volume r0
+alias pressure r1
+alias temperature r2
+define liquidAnalyzer -2113838091
+define heater -287495560
+define purge -737232128
+define volumePump -454028979
+
+main:
+yield
+
+#Polluted Intake
+lbn volume liquidAnalyzer HASH("Polluted Intake Analyzer") Volume Sum
+sgt volume volume 1
+sbn volumePump HASH("Polluted Pump") On volume
+
+#Polluted Heaters and Purge valve
+lbn volume liquidAnalyzer HASH("Polluted Steam Analyzer") VolumeOfLiquid Sum
+lbn pressure liquidAnalyzer HASH("Polluted Steam Analyzer") Pressure Sum
+snez volume volume
+sbn heater HASH("Polluted Heater") On volume
+snez pressure pressure
+sbn purge HASH("Steam Purge") On pressure
+
+#Water Main
+lbn temperature liquidAnalyzer HASH("Water Storage Analyzer") Temperature Sum
+sub temperature temperature 273
+slt temperature temperature 10
+sbn heater HASH("Water Storage Heater") On temperature
+lbn volume liquidAnalyzer HASH("Water Main Analyzer") Volume Sum
+slt volume volume 100
+sbn volumePump HASH("Water Main Pump") On volume
+j main

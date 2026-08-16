@@ -1,0 +1,97 @@
+alias temperature r0
+alias pressure r1
+alias powerCheck r2
+alias gasRatio r3
+alias totalMol r4
+define filtration -348054045 #ratios are between 0-1
+define pipeHeater -419758574
+define pipeAnalyzer 435685051
+define minMole 0.0001
+
+main:
+yield
+jal storageHeat
+jal filtrationPower
+j main
+
+storageHeat:
+yield
+lbn temperature pipeAnalyzer HASH("Waste Analyzer") Temperature Sum
+lbn pressure pipeAnalyzer HASH("Waste Analyzer") Pressure Sum
+sub temperature temperature 273
+slt temperature temperature 20
+snez pressure pressure
+seq powerCheck pressure temperature
+sbn pipeHeater HASH("Waste Heater") On powerCheck
+lbn temperature pipeAnalyzer HASH("N20 Analyzer") Temperature Sum
+lbn pressure pipeAnalyzer HASH("N20 Analyzer") Pressure Sum
+sub temperature temperature 273
+slt temperature temperature 160
+snez pressure pressure
+seq powerCheck pressure temperature
+sbn pipeHeater HASH("N20 Heater") On powerCheck
+lbn temperature pipeAnalyzer HASH("Methane Analyzer") Temperature Sum
+lbn pressure pipeAnalyzer HASH("Methane Analyzer") Pressure Sum
+sub temperature temperature 273
+slt temperature temperature 20
+snez pressure pressure
+seq powerCheck pressure temperature
+sbn pipeHeater HASH("Methane Heater") On powerCheck
+lbn temperature pipeAnalyzer HASH("Hydrogen Analyzer") Temperature Sum
+lbn pressure pipeAnalyzer HASH("Hydrogen Analyzer") Pressure Sum
+sub temperature temperature 273
+slt temperature temperature 20
+snez pressure pressure
+seq powerCheck pressure temperature
+sbn pipeHeater HASH("Hydrogen Heater") On powerCheck
+lbn temperature pipeAnalyzer HASH("Nitrogen Analyzer") Temperature Sum
+lbn pressure pipeAnalyzer HASH("Nitrogen Analyzer") Pressure Sum
+sub temperature temperature 273
+slt temperature temperature 20
+snez pressure pressure
+seq powerCheck pressure temperature
+sbn pipeHeater HASH("Nitrogen Heater") On powerCheck
+lbn temperature pipeAnalyzer HASH("CO2 Analyzer") Temperature Sum
+lbn pressure pipeAnalyzer HASH("CO2 Analyzer") Pressure Sum
+sub temperature temperature 273
+slt temperature temperature 20
+snez pressure pressure
+seq powerCheck pressure temperature
+sbn pipeHeater HASH("CO2 Heater") On powerCheck
+lbn temperature pipeAnalyzer HASH("Oxygen Analyzer") Temperature Sum
+lbn pressure pipeAnalyzer HASH("Oxygen Analyzer") Pressure Sum
+sub temperature temperature 273
+slt temperature temperature 20
+snez pressure pressure
+seq powerCheck pressure temperature
+sbn pipeHeater HASH("Oxygen Heater") On powerCheck
+j ra
+
+filtrationPower:
+yield
+lbn totalMol pipeAnalyzer HASH("Waste Analyzer") TotalMoles Sum
+lbn gasRatio pipeAnalyzer HASH("Waste Analyzer") RatioOxygen Sum
+mul gasRatio gasRatio totalMol
+sgt gasRatio gasRatio minMole
+sbn filtration HASH("Oxygen Filter") On gasRatio
+lbn gasRatio pipeAnalyzer HASH("Waste Analyzer") RatioCarbonDioxide Sum
+mul gasRatio gasRatio totalMol
+sgt gasRatio gasRatio minMole
+sbn filtration HASH("CO2 Filter") On gasRatio
+lbn gasRatio pipeAnalyzer HASH("Waste Analyzer") RatioNitrogen Sum
+mul gasRatio gasRatio totalMol
+sgt gasRatio gasRatio minMole
+sbn filtration HASH("Nitrogen Filter") On gasRatio
+lbn gasRatio pipeAnalyzer HASH("Waste Analyzer") RatioHydrogen Sum
+mul gasRatio gasRatio totalMol
+sgt gasRatio gasRatio minMole
+sbn filtration HASH("Hydrogen Filter") On gasRatio
+lbn gasRatio pipeAnalyzer HASH("Waste Analyzer") RatioMethane Sum
+mul gasRatio gasRatio totalMol
+sgt gasRatio gasRatio minMole
+sbn filtration HASH("Methane Filter") On gasRatio
+lbn gasRatio pipeAnalyzer HASH("Waste Analyzer") RatioNitrousOxide Sum
+mul gasRatio gasRatio totalMol
+sgt gasRatio gasRatio minMole
+sbn filtration HASH("N2O Filter") On gasRatio
+j ra

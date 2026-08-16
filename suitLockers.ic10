@@ -1,0 +1,58 @@
+alias locker1 d0
+alias locker2 d1
+alias activate r0
+alias battery r1
+alias oxygen r7
+alias oxygenMin r2
+alias oxygenMax r3
+alias jetpack r8
+alias jetpackMin r4
+alias jetpackMax r5
+alias activate1 r6
+alias occupied r8
+define pressureRegulator 209854039
+
+main:
+yield
+jal suitstorage1
+jal suitstorage2
+j main
+
+suitstorage1:
+yield
+ls battery locker1 1 Charge
+ls oxygen locker1 1 PressureAir
+ls jetpack locker1 2 Pressure
+slt battery battery 100
+slt oxygenMax oxygen 9500
+snez oxygenMin oxygen
+and oxygen oxygenMin oxygenMax
+sbn pressureRegulator HASH("Suit Oxygen Pump") On oxygen
+slt jetpackMax jetpack 9500
+snez jetpackMin jetpack
+and jetpack jetpackMin jetpackMax
+sbn pressureRegulator HASH("Suit Nitrogen Pump") On jetpack
+or activate1 jetpack oxygen
+or activate battery activate1
+s locker1 On activate
+j ra
+
+
+suitstorage2:
+yield
+ls battery locker2 1 Charge
+ls oxygen locker2 1 PressureAir
+ls jetpack locker2 2 Pressure
+slt battery battery 100
+slt oxygenMax oxygen 9500
+snez oxygenMin oxygen
+and oxygen oxygenMin oxygenMax
+sbn pressureRegulator HASH("Suit Oxygen Pump") On oxygen
+slt jetpackMax jetpack 9500
+snez jetpackMin jetpack
+and jetpack jetpackMin jetpackMax
+sbn pressureRegulator HASH("Suit Nitrogen Pump") On jetpack
+or activate1 jetpack oxygen
+or activate battery activate1
+s locker2 On activate
+j ra
