@@ -1,0 +1,68 @@
+define updateDelayTicks 10
+define filtrationUnit -348054045
+define led 1944485013
+alias waitForTicks r15
+
+checkFilters:
+push HASH("Oxygen Filter")
+push HASH("O2 Filter Status LED")
+jal getFilterStatus
+push HASH("CO2 Filter")
+push HASH("CO2 Filter Status LED")
+jal getFilterStatus
+push HASH("Nitrogen Filter")
+push HASH("N2 Filter Status LED")
+jal getFilterStatus
+push HASH("Hydrogen Filter")
+push HASH("H2 Filter Status LED")
+jal getFilterStatus
+push HASH("Methane Filter")
+push HASH("Methane Filter Status LED")
+jal getFilterStatus
+push HASH("N2O Filter")
+push HASH("N2O Filter Status LED")
+jal getFilterStatus
+yield
+j checkFilters
+
+setStatusLed:
+alias ledId r0
+alias color r1
+pop color
+pop ledId
+sbn led ledId On 1
+sbn led ledId Color color
+j ra
+
+getFilterStatus:
+alias deviceId r0
+alias filter1Empty r1
+alias filter2Empty r2
+alias temp r3
+alias ledId r4
+pop ledId
+pop deviceId
+lbns temp filtrationUnit deviceId 0 Quantity Minimum
+select filter1Empty temp 0 1
+lbns temp filtrationUnit deviceId 1 Quantity Minimum
+select filter2Empty temp 0 1
+push ra
+push ledId
+and temp filter1Empty filter2Empty
+bgt temp 0 setError
+or temp filter1Empty filter2Empty
+bgt temp 0 setWarning
+push Color.Green
+jal setStatusLed
+pop ra
+j ra
+setError:
+push Color.Red
+jal setStatusLed
+pop ra
+j ra
+setWarning:
+push Color.Yellow
+jal setStatusLed
+pop ra
+j ra
