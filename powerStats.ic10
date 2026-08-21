@@ -1,0 +1,49 @@
+alias minPower d0
+alias maxPower d1
+alias currentlyNight r13
+alias currentMin r12
+alias currentMax r11
+define stationBattery -400115994
+define daylightSensor 1076425094
+
+# initialise properly
+move currentlyNight 10
+
+update:
+yield
+jal handleNightCycleChange
+s minPower Setting currentMin
+s maxPower Setting currentMax
+alias currentPower r0
+lb currentPower stationBattery Mode Sum
+# s db Setting currentlyNight
+beq currentlyNight 1 setLowest
+# currentPower < currentMax, don't update
+blt currentPower currentMax update
+move currentMax currentPower
+j update
+setLowest:
+# currentPower > currentMin, don't update
+bgt currentPower currentMin update
+move currentMin currentPower
+j update
+
+handleNightCycleChange:
+alias nightCheck r0
+lb nightCheck daylightSensor Vertical Minimum
+sgt nightCheck nightCheck 90
+s db Setting nightCheck
+bne nightCheck currentlyNight setCurrentlyNight
+# no change, don't update
+j ra
+setCurrentlyNight:
+# nightCheck < currentlyNight -> it just turned day
+blt nightCheck currentlyNight setDay
+# otherwise, it just turned night
+move currentMin currentMax
+move currentlyNight nightCheck
+j ra
+setDay:
+move currentMax currentMin
+move currentlyNight nightCheck
+j ra
