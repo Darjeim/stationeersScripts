@@ -1,0 +1,89 @@
+define silos 1155865682
+define dial 554524804
+define monitor 801677497
+define button 491845673
+alias request r0
+alias amount r1
+alias activate r3
+alias siloReference r4
+
+main:
+yield
+sbn dial HASH("Amount Dial") Mode 10
+lbn request dial HASH("Request Dial") Setting Sum
+lbn amount dial HASH("Amount Dial") Setting Sum
+lbn activate button HASH("Get Items") Activate Sum
+beqz activate main
+beqal request 1 getBiomass
+beqal request 2 getCharcoal
+beqal request 3 getCoal
+beqal request 4 getCobalt
+beqal request 5 getCopper
+beqal request 6 getGold
+beqal request 7 getIron
+beqal request 8 getLead
+beqal request 9 getNickel
+beqal request 10 getSilicon
+beqal request 11 getSilver
+beqal request 12 getUranium
+j main
+
+getBiomass:
+move siloReference HASH("Biomass Silo")
+j retrieve
+getCharcoal:
+move siloReference HASH("Charcoal Silo")
+j retrieve
+getCoal:
+move siloReference HASH("Coal Silo")
+j retrieve
+getCobalt:
+move siloReference HASH("Cobalt Silo")
+j retrieve
+getCopper:
+move siloReference HASH("Copper Silo")
+j retrieve
+getGold:
+move siloReference HASH("Gold Silo")
+j retrieve
+getIron:
+move siloReference HASH("Iron Silo")
+j retrieve
+getLead:
+move siloReference HASH("Lead Silo")
+j retrieve
+getNickel:
+move siloReference HASH("Nickel Silo")
+j retrieve
+getSilicon:
+move siloReference HASH("Silicon Silo")
+j retrieve
+getSilver:
+move siloReference HASH("Silver Silo")
+j retrieve
+getUranium:
+move siloReference HASH("Uranium Silo")
+j retrieve
+getIce:
+move siloReference HASH("Ice Silo")
+j retrieve
+getNitrice:
+move siloReference HASH("Nitrice Silo")
+j retrieve
+getOxite:
+move siloReference HASH("Oxite Silo")
+j retrieve
+getVolatile:
+move siloReference HASH("Volatile Silo")
+j retrieve
+
+retrieve:
+move r15 amount
+sbn silos siloReference ClearMemory 1
+sbn silos siloReference Open 1
+yield
+sbn silos siloReference Open 0
+yield
+sub r15 r15 1
+brgtz r15 -5
+j ra

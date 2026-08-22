@@ -17,6 +17,6 @@ sb panels Horizontal placeHolder
 j trackSun
 
 reset:
-sb panels Vertical 0
-sb panels Horizontal 90
+sb panels Vertical 153
+sb panels Horizontal -87
 j trackSun
