@@ -12,7 +12,8 @@ define lights 1514476632
 
 main:
 yield
-l occupancy sensor Activate
+l occupancy sensor Quantity
+snez occupancy occupancy
 sb lights On occupancy
 s workbench On occupancy
 s waterFountain On occupancy
